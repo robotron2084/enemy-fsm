@@ -3,12 +3,12 @@
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
 Enemy-FSM/[Ll]ibrary/
-Enemy-FSM//[Tt]emp/
-Enemy-FSM//[Oo]bj/
-Enemy-FSM//[Bb]uild/
-Enemy-FSM//[Bb]uilds/
-Enemy-FSM//[Ll]ogs/
-Enemy-FSM//[Uu]ser[Ss]ettings/
+Enemy-FSM/[Tt]emp/
+Enemy-FSM/[Oo]bj/
+Enemy-FSM/[Bb]uild/
+Enemy-FSM/[Bb]uilds/
+Enemy-FSM/[Ll]ogs/
+Enemy-FSM/[Uu]ser[Ss]ettings/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -25,6 +25,9 @@ Enemy-FSM/[Aa]ssets/Plugins/Editor/JetBrains*
 
 # Visual Studio cache directory
 .vs/
+
+# Rider dir.
+.idea/
 
 # Gradle cache directory
 .gradle/
