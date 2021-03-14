@@ -16,7 +16,6 @@ Future Goals
   * Unitask support.
   * Make it a package.
 
-Early days, check out the code if you like! This is an experiment to see how well the above things mix. I have a feeling they might work well together. We'll see!
 # Example Usage
 
 An FSM is comprised of 3 components:
@@ -34,7 +33,7 @@ public enum States
   Dead
 }
 ```
-We can create an Actor that matches the given states:
+We need an 'actor' which will respond to state changes:
 ```csharp
 public class MyActor
 {
@@ -81,7 +80,13 @@ public class MyActor
  }
 }
 ```
+The state machine continues to run until disposed of:
+```csharp
+fsm.Dispose();
+```
 
+
+Early days, check out the code if you like! This is an experiment to see how well the above things mix. I have a feeling they might work well together. We'll see!
 
 
 
