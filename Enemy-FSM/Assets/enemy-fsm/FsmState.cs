@@ -19,17 +19,18 @@ namespace com.enemyhideout.fsm
     public Func<CancellationToken, Task> OnExit;
     public Action OnUpdate;
 
-    public void Enter()
+    public void Enter(Task exitingState)
     {
       if (OnEnter != null)
       {
         _cancellationTokenSource = new CancellationTokenSource();
-        Task_Enter();
+        Task_Enter(exitingState);
       }
     }
 
-    public async void Task_Enter()
+    public async void Task_Enter(Task exitingState)
     {
+      await exitingState;
       CancellationTokenSource cts = _cancellationTokenSource; //capture
       await OnEnter(_cancellationTokenSource.Token);
       if (!cts.Token.IsCancellationRequested)
@@ -52,7 +53,7 @@ namespace com.enemyhideout.fsm
         }
       }
     }
-    public async void Exit()
+    public async Task Exit()
     {
       _cancellationTokenSource.Cancel();
       if (OnExit != null)

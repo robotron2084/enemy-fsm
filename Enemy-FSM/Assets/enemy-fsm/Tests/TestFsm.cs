@@ -37,12 +37,14 @@ namespace com.enemyhideout.fsm.tests
       
       public async Task Sprint_Enter(CancellationToken token)
       {
+        Log("Entering Sprint...");
         await Task.Delay(1000);
         if (token.IsCancellationRequested)
         {
+          Log("Exiting Sprint Early.");
           return;
         }
-        Log("Entered!");
+        Log("Sprint Entered!");
       }
 
       public async Task Running_Enter(CancellationToken token)
@@ -64,7 +66,10 @@ namespace com.enemyhideout.fsm.tests
       
       public Task Running_Exit(CancellationToken token)
       {
-        Log("Done running...phew i'm tired.");
+        Log("Exiting Run...");
+        Task.Delay(500);
+        Log("Done running.");
+        
         return Task.CompletedTask;
       }
       
@@ -97,7 +102,7 @@ namespace com.enemyhideout.fsm.tests
         TestActor actor = new TestActor();
         actor.fsm.ChangeState(TestActor.States.Sprint);
         await Task.Delay(1100);
-        AssertLog(actor.ObjectHistory, "Entered!");
+        AssertLog(actor.ObjectHistory, "Entering Sprint...", "Sprint Entered!");
         
         actor.fsm.ChangeState(TestActor.States.Idle);
         actor.fsm.ChangeState(TestActor.States.Sprint);
@@ -105,7 +110,7 @@ namespace com.enemyhideout.fsm.tests
         //changing state! we should not see log messages!
         actor.fsm.ChangeState(TestActor.States.Idle);
         await Task.Delay(1000);
-        Assert.AreEqual(0, actor.ObjectHistory.Count);
+        AssertLog(actor.ObjectHistory, "Entering Sprint...", "Exiting Sprint Early.");
         
 
         actor.fsm.ChangeState(TestActor.States.Running);
@@ -113,7 +118,9 @@ namespace com.enemyhideout.fsm.tests
         AssertLog(actor.ObjectHistory,"Ready...", "Set...", "Go!!!",
           "Running 0","Running 1","Running 2","Running 3","Running 4");
 
-        actor.fsm.ChangeState(TestActor.States.Idle);
+        actor.fsm.ChangeState(TestActor.States.Sprint);
+        await Task.Delay(1100);
+        AssertLog(actor.ObjectHistory, "Exiting Run...","Done running.", "Entering Sprint...", "Sprint Entered!");
 
         try
         {

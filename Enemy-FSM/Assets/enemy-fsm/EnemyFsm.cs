@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace com.enemyhideout.fsm
@@ -20,9 +21,14 @@ namespace com.enemyhideout.fsm
 
     public void ChangeState(T newState)
     {
-      CurrentState?.Exit();
+      Task exitingTask = null;
+      if (CurrentState != null)
+      {
+        exitingTask = CurrentState.Exit();
+      }
+      
       CurrentState =  FsmCore<T>.ChangeState(newState, CurrentState, AllStates);
-      CurrentState.Enter();
+      CurrentState.Enter(exitingTask);
     }
 
     public void Dispose()

@@ -61,13 +61,6 @@ namespace com.enemyhideout.fsm
         return allStates[newState];
     }
 
-    public static void TransitionState(FsmState<T> currentState, FsmState<T> newState)
-    {
-      currentState.Exit();
-      newState.Enter();
-    }
-    
-    
     private static V CreateDelegate<V>(MethodInfo method, Object target) where V : class
     {
       var ret = (Delegate.CreateDelegate(typeof(V), target, method) as V);
