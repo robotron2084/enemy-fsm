@@ -11,15 +11,23 @@ namespace com.enemyhideout.fsm
 
     public Dictionary<T, FsmState<T>> AllStates;
     
-    public EnemyFsm()
+    public EnemyFsm(object actor)
     {
       AllStates = FsmCore<T>.GenerateStates();
-      CurrentState = AllStates[default(T)];
+      FsmCore<T>.PopulateStates(AllStates, actor);
+      ChangeState(default(T));
     }
 
     public void ChangeState(T newState)
     {
+      CurrentState?.Exit();
       CurrentState =  FsmCore<T>.ChangeState(newState, CurrentState, AllStates);
+      CurrentState.Enter();
+    }
+
+    public void Dispose()
+    {
+      CurrentState?.Cancel();
     }
 
   }

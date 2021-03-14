@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -16,6 +17,8 @@ namespace com.enemyhideout.fsm.tests
             Running,
             Dead
         }
+
+        
         [Test]
         public void FsmCoreTestGenerateStates()
         {
