@@ -4,7 +4,7 @@ Attempting to build my own generic FSM setup with the following criteria:
   * Unity Support
   * Unity Editor Support
   * Use either `async Task` or standard functions.
-  * Based on Functional Core, Imperative Shell.
+  * Using Functional Core, Imperative Shell principles.
   * Using reflection to allow for lightweight setup.
 
 Not looking for
