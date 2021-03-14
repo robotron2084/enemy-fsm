@@ -15,6 +15,7 @@ Future Goals
   * Performance.
   * Unitask support.
   * Make it a package.
+  * A better name! :D
 
 # Example Usage
 
