@@ -65,7 +65,7 @@ public class MyActor
  {
    Task.Delay(1000);
    
-   // if you don't want this to run after the state has been executed, check the token:
+   // if the state changes, you can exit early, and respond to the exit and clean up if necessary.
    if(ct.IsCancellationRequested)
    {
     return;
