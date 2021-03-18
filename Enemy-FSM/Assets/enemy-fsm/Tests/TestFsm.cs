@@ -50,6 +50,10 @@ namespace com.enemyhideout.fsm.tests
         await Task.Delay(1100);
         AssertLog(actor.ObjectHistory, "Exiting Run...","Done running.", "Entering Sprint...", "Sprint Entered!");
 
+        actor.fsm.ChangeState(TestActor.States.Hiding);
+        await Task.Delay(10);
+        AssertLog(actor.ObjectHistory, "Hiding");
+        
         try
         {
           actor.fsm.ChangeState(TestActor.States.Dead);

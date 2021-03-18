@@ -15,7 +15,8 @@ namespace com.enemyhideout.fsm.tests
         Idle,
         Sprint,
         Running,
-        Dead
+        Dead,
+        Hiding
       }
 
       public List<string> ObjectHistory = new List<string>();
@@ -29,6 +30,7 @@ namespace com.enemyhideout.fsm.tests
         fsm = new EnemyFsm<States>(this);
       }
       
+      // test: only enter.
       public async Task Sprint_Enter(CancellationToken token)
       {
         Log("Entering Sprint...");
@@ -41,6 +43,7 @@ namespace com.enemyhideout.fsm.tests
         Log("Sprint Entered!");
       }
 
+      // Test 3 phases enter/update/exit
       public async Task Running_Enter(CancellationToken token)
       {
         Log("Ready...");
@@ -70,6 +73,12 @@ namespace com.enemyhideout.fsm.tests
       public Task Dead_Enter(CancellationToken token)
       {
         throw new Exception("I cannot die!");
+      }
+
+      // Test: update only.
+      public void Hiding_Update()
+      {
+        Log("Hiding");
       }
 
       void Log(string msg)

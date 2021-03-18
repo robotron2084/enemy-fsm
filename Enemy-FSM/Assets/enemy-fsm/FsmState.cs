@@ -28,13 +28,28 @@ namespace com.enemyhideout.fsm
         _cancellationTokenSource = new CancellationTokenSource();
         Task_Enter(exitingState);
       }
+      else
+      {
+        OnEnter?.Invoke();
+        Update();
+      }
+    }
+
+    public async void Update()
+    {
+      await Update(_cancellationTokenSource);
     }
 
     public async void Task_Enter(Task exitingState)
     {
       await exitingState;
-      CancellationTokenSource cts = _cancellationTokenSource; //capture
-      await OnEnterTask(_cancellationTokenSource.Token);
+      CancellationTokenSource cts = _cancellationTokenSource;
+      await OnEnterTask(cts.Token);
+      await Update(cts);
+    }
+
+    private async Task Update(CancellationTokenSource cts)
+    {
       if (!cts.Token.IsCancellationRequested)
       {
         if (OnUpdate != null)
@@ -55,6 +70,7 @@ namespace com.enemyhideout.fsm
         }
       }
     }
+
     public async Task Exit()
     {
       _cancellationTokenSource.Cancel();
@@ -63,6 +79,11 @@ namespace com.enemyhideout.fsm
         _cancellationTokenSource = new CancellationTokenSource();
         await OnExitTask(_cancellationTokenSource.Token);
       }
+      else
+      {
+        OnExit?.Invoke();
+      }
+      
     }
 
     public void Cancel()
