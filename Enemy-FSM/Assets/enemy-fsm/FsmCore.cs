@@ -47,7 +47,7 @@ namespace com.enemyhideout.fsm
 
       if (SetDelegateFor(methodName, actor, ref myTask))
       {
-        if (myTask != null)
+        if (myTask == null)
         {
           if (!SetDelegateFor(methodName, actor, ref myAction))
           {

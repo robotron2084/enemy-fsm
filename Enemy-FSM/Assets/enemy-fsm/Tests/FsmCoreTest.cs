@@ -45,38 +45,70 @@ namespace com.enemyhideout.fsm.tests
         }
 
         [Test]
-        public void FsmCoreSetDelegateFuncTest()
+        public void FsmCoreSetDelegateFuncTest([ValueSource("DelegateFuncTestCases")] DelegateFuncTestCase testCase)
         {
 
             Func<CancellationToken, Task> TestDelegate = null;
-            bool noErrorsFound = FsmCore<FsmCoreTest>.SetDelegateFor("PublicFunction", this, ref TestDelegate);
-            Assert.IsTrue(noErrorsFound);
-            Assert.IsNotNull(TestDelegate);
+            bool noErrorsFound = FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, this, ref TestDelegate);
+            Assert.AreEqual(testCase.NoErrorsFound, noErrorsFound);
+            Assert.AreEqual(testCase.ShouldHaveDelegate, TestDelegate != null);
+        }
 
-            TestDelegate = null;
-            noErrorsFound = FsmCore<FsmCoreTest>.SetDelegateFor("PrivateFunction", this, ref TestDelegate);
-            Assert.IsTrue(noErrorsFound);
-            Assert.IsNotNull(TestDelegate);
+        public static List<DelegateFuncTestCase> DelegateFuncTestCases = new List<DelegateFuncTestCase>()
+        {
+            new DelegateFuncTestCase()
+            {
+                Description = "Public Function",
+                FunctionName = "PublicFunction",
+                NoErrorsFound = true,
+                ShouldHaveDelegate = true
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Private Function",
+                FunctionName = "PrivateFunction",
+                NoErrorsFound = true,
+                ShouldHaveDelegate = true
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Task without a Cancellation Token",
+                FunctionName = "TaskWithoutToken",
+                NoErrorsFound = false,
+                ShouldHaveDelegate = false
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Invalid Return Type test",
+                FunctionName = "InvalidReturnTypeFunction",
+                NoErrorsFound = false,
+                ShouldHaveDelegate = false
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Non-existent Function",
+                FunctionName = "DoesntExist",
+                NoErrorsFound = true,
+                ShouldHaveDelegate = false
+            }
             
-            //todo: Test virtual/protected functions.
-            
-            // invalid parameters
-            TestDelegate = null;
-            noErrorsFound = FsmCore<FsmCoreTest>.SetDelegateFor("TaskWithoutToken", this, ref TestDelegate);
-            Assert.IsFalse(noErrorsFound);
-            Assert.IsNull(TestDelegate);
-            
-            TestDelegate = null;
-            noErrorsFound = FsmCore<FsmCoreTest>.SetDelegateFor("InvalidReturnTypeFunction", this, ref TestDelegate);
-            Assert.IsFalse(noErrorsFound);
-            Assert.IsNull(TestDelegate);
-            
-            // It is ok to not set the delegate.
-            TestDelegate = null;
-            noErrorsFound = FsmCore<FsmCoreTest>.SetDelegateFor("DoesntExist", this, ref TestDelegate);
-            Assert.IsTrue(noErrorsFound);
-            Assert.IsNull(TestDelegate);
+        };
+        
 
+        
+
+        public class DelegateFuncTestCase
+        {
+            public string Description;
+            public string FunctionName;
+            public bool NoErrorsFound;
+            public bool ShouldHaveDelegate;
+            public bool ShouldHaveAction;
+            
+            public override string ToString()
+            {
+                return $"[{Description}]";
+            }
         }
 
         public void InvalidReturnTypeFunction(CancellationToken token)
@@ -101,37 +133,12 @@ namespace com.enemyhideout.fsm.tests
         
         
         [Test]
-        public void FsmCoreSetDelegateActionTest()
+        public void FsmCoreSetDelegateActionTest([ValueSource("DelegateActionTestCases")] DelegateFuncTestCase testCase)
         {
             Action testAction = null;
-            bool noErrorsFound = FsmCore<FsmCoreTest>.SetDelegateFor("PublicAction", this, ref testAction);
-            Assert.IsTrue(noErrorsFound);
-            Assert.IsNotNull(testAction);
-
-            testAction = null;
-            noErrorsFound = FsmCore<FsmCoreTest>.SetDelegateFor("PrivateAction", this, ref testAction);
-            Assert.IsTrue(noErrorsFound);
-            Assert.IsNotNull(testAction);
-            
-            //todo: Test virtual/protected functions.
-            
-            // invalid parameters
-            testAction = null;
-            noErrorsFound = FsmCore<FsmCoreTest>.SetDelegateFor("ActionWithArgs", this, ref testAction);
-            Assert.IsFalse(noErrorsFound);
-            Assert.IsNull(testAction);
-            
-            testAction = null;
-            noErrorsFound = FsmCore<FsmCoreTest>.SetDelegateFor("InvalidReturnTypeAction", this, ref testAction);
-            Assert.IsFalse(noErrorsFound);
-            Assert.IsNull(testAction);
-            
-            // It is ok to not set the delegate.
-            testAction = null;
-            noErrorsFound = FsmCore<FsmCoreTest>.SetDelegateFor("DoesntExist", this, ref testAction);
-            Assert.IsTrue(noErrorsFound);
-            Assert.IsNull(testAction);
-
+            bool noErrorsFound = FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, this, ref testAction);
+            Assert.AreEqual(testCase.NoErrorsFound, noErrorsFound);
+            Assert.AreEqual(testCase.ShouldHaveAction, testAction != null);
         }
         
         public void PublicAction()
@@ -152,17 +159,132 @@ namespace com.enemyhideout.fsm.tests
             
         }
         
+        public static List<DelegateFuncTestCase> DelegateActionTestCases = new List<DelegateFuncTestCase>()
+        {
+            new DelegateFuncTestCase()
+            {
+                Description = "Public Action",
+                FunctionName = "PublicAction",
+                NoErrorsFound = true,
+                ShouldHaveAction = true
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Private Action",
+                FunctionName = "PrivateAction",
+                NoErrorsFound = true,
+                ShouldHaveAction = true
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Action With Args",
+                FunctionName = "ActionWithArgs",
+                NoErrorsFound = false,
+                ShouldHaveAction = false
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Invalid Return Type Action",
+                FunctionName = "InvalidReturnTypeAction",
+                NoErrorsFound = false,
+                ShouldHaveAction = false
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Non-existent Function",
+                FunctionName = "DoesntExist",
+                NoErrorsFound = true,
+                ShouldHaveAction = false
+            }
+            
+        };
+        
         [Test]
-        public void FsmCoreSetDelegateExceptionTest()
+        public void FsmCoreSetDelegateTest([ValueSource("SetDelegateTestCases")] DelegateFuncTestCase testCase)
         {
             Action testAction = null;
             Func<CancellationToken, Task> testFunc = null;
-            FsmCore<FsmCoreTest>.SetDelegateFor("PublicAction", this, ref testFunc, ref testAction);
-            Assert.IsNull(testFunc);
-            Assert.IsNotNull(testAction);
-
-            
+            FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, this, ref testFunc, ref testAction);
+            Assert.AreEqual(testCase.ShouldHaveAction, testAction != null);
+            Assert.AreEqual(testCase.ShouldHaveDelegate, testFunc != null);
         }
+        
+        [Test]
+        public void FsmCoreSetDelegateExceptionTest([ValueSource("SetDelegateExceptionTestCases")] DelegateFuncTestCase testCase)
+        {
+            Action testAction = null;
+            Func<CancellationToken, Task> testFunc = null;
+            Assert.Catch<InvalidCastException>(() =>
+                FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, this, ref testFunc, ref testAction));
+        }
+        
+        
+        
+        public static List<DelegateFuncTestCase> SetDelegateTestCases = new List<DelegateFuncTestCase>()
+        {
+            new DelegateFuncTestCase()
+            {
+                Description = "Public Function",
+                FunctionName = "PublicFunction",
+                ShouldHaveDelegate = true,
+                ShouldHaveAction = false
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Public Action",
+                FunctionName = "PublicAction",
+                ShouldHaveDelegate = false,
+                ShouldHaveAction = true
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Private Function",
+                FunctionName = "PrivateFunction",
+                ShouldHaveDelegate = true,
+                ShouldHaveAction = false
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Private Action",
+                FunctionName = "PrivateAction",
+                ShouldHaveDelegate = false,
+                ShouldHaveAction = true
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Non-existent Action",
+                FunctionName = "DoesNotExist",
+                ShouldHaveDelegate = false,
+                ShouldHaveAction = false
+            },
+        };
+        
+        public static List<DelegateFuncTestCase> SetDelegateExceptionTestCases = new List<DelegateFuncTestCase>()
+        {
+            new DelegateFuncTestCase()
+            {
+                Description = "Invalid Return Type Action",
+                FunctionName = "InvalidReturnTypeAction",
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Invalid Return Type Function",
+                FunctionName = "InvalidReturnTypeFunction",
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Invalid Args Function",
+                FunctionName = "TaskWithoutToken",
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Invalid Args Action",
+                FunctionName = "ActionWithArgs",
+            },
+
+        };
+        
+        
         
         
 
