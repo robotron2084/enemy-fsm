@@ -49,8 +49,7 @@ namespace com.enemyhideout.fsm.tests
         {
 
             Func<CancellationToken, Task> TestDelegate = null;
-            bool noErrorsFound = FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, this, ref TestDelegate);
-            Assert.AreEqual(testCase.NoErrorsFound, noErrorsFound);
+            FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, this, ref TestDelegate);
             Assert.AreEqual(testCase.ShouldHaveDelegate, TestDelegate != null);
         }
 
@@ -60,35 +59,36 @@ namespace com.enemyhideout.fsm.tests
             {
                 Description = "Public Function",
                 FunctionName = "PublicFunction",
-                NoErrorsFound = true,
                 ShouldHaveDelegate = true
             },
             new DelegateFuncTestCase()
             {
                 Description = "Private Function",
                 FunctionName = "PrivateFunction",
-                NoErrorsFound = true,
                 ShouldHaveDelegate = true
             },
             new DelegateFuncTestCase()
             {
                 Description = "Task without a Cancellation Token",
                 FunctionName = "TaskWithoutToken",
-                NoErrorsFound = false,
                 ShouldHaveDelegate = false
             },
             new DelegateFuncTestCase()
             {
                 Description = "Invalid Return Type test",
                 FunctionName = "InvalidReturnTypeFunction",
-                NoErrorsFound = false,
                 ShouldHaveDelegate = false
             },
             new DelegateFuncTestCase()
             {
                 Description = "Non-existent Function",
                 FunctionName = "DoesntExist",
-                NoErrorsFound = true,
+                ShouldHaveDelegate = false
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Public Action",
+                FunctionName = "PublicAction",
                 ShouldHaveDelegate = false
             }
             
@@ -101,7 +101,6 @@ namespace com.enemyhideout.fsm.tests
         {
             public string Description;
             public string FunctionName;
-            public bool NoErrorsFound;
             public bool ShouldHaveDelegate;
             public bool ShouldHaveAction;
             
@@ -136,8 +135,7 @@ namespace com.enemyhideout.fsm.tests
         public void FsmCoreSetDelegateActionTest([ValueSource("DelegateActionTestCases")] DelegateFuncTestCase testCase)
         {
             Action testAction = null;
-            bool noErrorsFound = FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, this, ref testAction);
-            Assert.AreEqual(testCase.NoErrorsFound, noErrorsFound);
+            FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, this, ref testAction);
             Assert.AreEqual(testCase.ShouldHaveAction, testAction != null);
         }
         
@@ -165,35 +163,30 @@ namespace com.enemyhideout.fsm.tests
             {
                 Description = "Public Action",
                 FunctionName = "PublicAction",
-                NoErrorsFound = true,
                 ShouldHaveAction = true
             },
             new DelegateFuncTestCase()
             {
                 Description = "Private Action",
                 FunctionName = "PrivateAction",
-                NoErrorsFound = true,
                 ShouldHaveAction = true
             },
             new DelegateFuncTestCase()
             {
                 Description = "Action With Args",
                 FunctionName = "ActionWithArgs",
-                NoErrorsFound = false,
                 ShouldHaveAction = false
             },
             new DelegateFuncTestCase()
             {
                 Description = "Invalid Return Type Action",
                 FunctionName = "InvalidReturnTypeAction",
-                NoErrorsFound = false,
                 ShouldHaveAction = false
             },
             new DelegateFuncTestCase()
             {
                 Description = "Non-existent Function",
                 FunctionName = "DoesntExist",
-                NoErrorsFound = true,
                 ShouldHaveAction = false
             }
             

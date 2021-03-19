@@ -16,7 +16,8 @@ namespace com.enemyhideout.fsm.tests
         Sprint,
         Running,
         Dead,
-        Hiding
+        Hiding,
+        DoubleJump
       }
 
       public List<string> ObjectHistory = new List<string>();
@@ -79,6 +80,20 @@ namespace com.enemyhideout.fsm.tests
       public void Hiding_Update()
       {
         Log("Hiding");
+      }
+      
+      // Test: enter task AND action
+
+      public void DoubleJump_Enter()
+      {
+        Log("DoubleJump");
+      }
+
+      public async Task DoubleJump_Enter(CancellationToken ct)
+      {
+        Log("DoubleJump2");
+        await UniTask.Yield();
+        Log("DoubleJump3");
       }
 
       void Log(string msg)

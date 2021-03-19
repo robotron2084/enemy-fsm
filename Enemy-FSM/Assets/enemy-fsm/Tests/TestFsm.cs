@@ -39,7 +39,6 @@ namespace com.enemyhideout.fsm.tests
         actor.fsm.ChangeState(TestActor.States.Idle);
         await Task.Delay(1000);
         AssertLog(actor.ObjectHistory, "Entering Sprint...", "Exiting Sprint Early.");
-        
 
         actor.fsm.ChangeState(TestActor.States.Running);
         await Task.Delay(1000);
@@ -54,6 +53,10 @@ namespace com.enemyhideout.fsm.tests
         await Task.Delay(10);
         AssertLog(actor.ObjectHistory, "Hiding");
         
+        actor.fsm.ChangeState(TestActor.States.DoubleJump);
+        await UniTask.Yield();
+        AssertLog(actor.ObjectHistory, "DoubleJump", "DoubleJump2", "DoubleJump3");
+
         try
         {
           actor.fsm.ChangeState(TestActor.States.Dead);

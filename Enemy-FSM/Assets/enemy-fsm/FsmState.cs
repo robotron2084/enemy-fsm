@@ -23,6 +23,7 @@ namespace com.enemyhideout.fsm
 
     public void Enter(Task exitingState)
     {
+      OnEnter?.Invoke();
       if (OnEnterTask != null)
       {
         _cancellationTokenSource = new CancellationTokenSource();
@@ -30,7 +31,6 @@ namespace com.enemyhideout.fsm
       }
       else
       {
-        OnEnter?.Invoke();
         Update();
       }
     }
@@ -73,17 +73,14 @@ namespace com.enemyhideout.fsm
 
     public async Task Exit()
     {
+
+      OnExit?.Invoke();
       _cancellationTokenSource.Cancel();
       if (OnExitTask != null)
       {
         _cancellationTokenSource = new CancellationTokenSource();
         await OnExitTask(_cancellationTokenSource.Token);
       }
-      else
-      {
-        OnExit?.Invoke();
-      }
-      
     }
 
     public void Cancel()

@@ -44,26 +44,12 @@ namespace com.enemyhideout.fsm
     public static void SetDelegateFor(string methodName, object actor, ref Func<CancellationToken, Task> myTask,
       ref Action myAction)
     {
-
-      if (SetDelegateFor(methodName, actor, ref myTask))
+      SetDelegateFor(methodName, actor, ref myTask);
+      SetDelegateFor(methodName, actor, ref myAction);
+      if(myTask == null && myAction == null)
       {
-        if (myTask == null)
-        {
-          if (!SetDelegateFor(methodName, actor, ref myAction))
-          {
-            // An error occurred!
-            throw new InvalidCastException(string.Format(InvalidMethodSignatureMessage, methodName));
-          }
-          else
-          {
-            //either it was set...or nothing bad happened...
-          }
-        }
-      }
-      else
-      {
-        // an error occurred...but maybe it wasn't an error and this sig will work?! 
-        if (!SetDelegateFor(methodName, actor, ref myAction))
+        MethodInfo method = actor.GetType().GetMethod(methodName);
+        if (method != null)
         {
           // An error occurred!
           throw new InvalidCastException(string.Format(InvalidMethodSignatureMessage, methodName));
@@ -71,10 +57,10 @@ namespace com.enemyhideout.fsm
       }
     }
 
-    public static bool SetDelegateFor<T1, T2>(string methodName, object actor, ref Func<T1,T2> myTask)
+    public static void SetDelegateFor<T1, T2>(string methodName, object actor, ref Func<T1,T2> myTask)
     {
       Type t = actor.GetType();
-      MethodInfo method = t.GetMethod(methodName, methodFlags);
+      MethodInfo method = t.GetMethod(methodName, methodFlags, null, new Type[]{ typeof(CancellationToken) }, null);
       if (method != null)
       {
         if (method.ReturnType == typeof(T2))
@@ -83,47 +69,20 @@ namespace com.enemyhideout.fsm
           if (parameters.Length == 1)
           {
             myTask = CreateDelegate<Func<T1,T2>>(method, actor);
-            return true;
           }
-          else
-          {
-            return false;
-          }
-        }
-        else
-        {
-          return false;
         }
       }
-
-      return true; // no errors found.
-
     }
 
-    public static bool SetDelegateFor(string methodName, object actor, ref Action myTask)
+    public static void SetDelegateFor(string methodName, object actor, ref Action myAction)
     {
       Type t = actor.GetType();
-      MethodInfo method = t.GetMethod(methodName, methodFlags);
-      if (method != null)
+      MethodInfo method = t.GetMethod(methodName, methodFlags, null, new Type[]{ }, null);
+
+      if (method != null && method.ReturnType == typeof(void))
       {
-        if (method.ReturnType == typeof(void))
-        {
-          if (method.GetParameters().Length == 0)
-          {
-            myTask = CreateDelegate<Action>(method, actor);
-            return true;
-          }
-          else
-          {
-            return false;
-          }
-        }
-        else
-        {
-          return false;
-        }
+          myAction = CreateDelegate<Action>(method, actor);
       }
-      return true;
     }
 
     public static FsmState<T> ChangeState(T newState, FsmState<T> currentState, Dictionary<T, FsmState<T>> allStates)

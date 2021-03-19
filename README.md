@@ -4,16 +4,18 @@ Attempting to build my own generic FSM setup with the following criteria:
   * Unity Support
   * Unity Editor Support
   * Use either `async Task` or standard functions.
-  * Using Functional Core, Imperative Shell principles.
+  * Using Functional Core/Imperative Shell principles.
   * Using reflection to allow for lightweight setup.
+  * Not tied to MonoBehaviours.
 
-Not looking for
+Not looking for:
   * Nested structures.
   * Triggers
 
-Future Goals
+### Future Goals
+
   * Performance.
-  * Unitask support.
+  * [UniTask](https://github.com/Cysharp/UniTask) support ( kind of implicitly supported!)
   * Make it a package.
   * A better name! :D
 
@@ -50,18 +52,31 @@ We can change the state of the actor by doing:
 fsm.ChangeState(States.Sprint);
 ```
 ## Responding to State Change
-States aren't that helpful unless we have functions that react to them. You can declare functions in your MyActor class that match the names of the states in your enumeration:
+States aren't that helpful unless we have functions that react to them. You can declare functions in your MyActor class that match the names of the states in your enumeration. Each state has an `_Enter`, `_Exit` and `_Update` handler  you can register.
 ```csharp
 public class MyActor
 {
- // Entering and existing a state are tasks that can be cancelled when state changes occur.
+    
+ // Entering and exiting a state can be represented as a Task, an Action, or both.
+ public void Idle_Enter()
+ {
+     Debug.Log("This is called first");
+ }
+    
  public Task Idle_Enter(CancellationToken ct)
  {
+     Debug.Log("This is called second");
    // entering
    Task.Delay(1000);
    Debug.Log("Entered!");
  }
  
+ // States can have an update function which is called every frame:
+ public void Idle_Update()
+ {
+   Debug.Log("Executed every frame!");
+ }
+        
  public Task Idle_Exit(CancellationToken ct)
  {
    Task.Delay(1000);
@@ -73,12 +88,7 @@ public class MyActor
    }
    Debug.Log("Exited!");
  }
- 
- // States can have an update function which is called every frame:
- public void Idle_Update()
- {
-   Debug.Log("Executed every frame!");
- }
+
 }
 ```
 The state machine continues to run until disposed of:
