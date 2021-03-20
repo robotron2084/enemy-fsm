@@ -12,12 +12,15 @@ namespace com.enemyhideout.fsm.tests
     {
       public enum States
       {
-        Idle,
-        Sprint,
-        Running,
-        Dead,
-        Hiding,
-        DoubleJump
+        Idle, // has no defined actions or tasks.
+        Sprint, // only enter
+        Running, // enterTask, update, exitTask
+        Dead, // throws an exception (testing that task exceptions correctly bubble)
+        Hiding, // update only
+        DoubleJump, // enterTask + enterAction
+        Turn, // enterAction, update, changes state in update.
+        TestStateX, TestStateY, TestStateZ, // check that when changing state when exiting a state, that the state doesn't continue to the stale state. 
+        
       }
 
       public List<string> ObjectHistory = new List<string>();
@@ -95,6 +98,43 @@ namespace com.enemyhideout.fsm.tests
         await UniTask.Yield();
         Log("DoubleJump3");
       }
+
+      private int turnIndex;
+      public void Turn_Enter()
+      {
+        turnIndex = 0;
+      }
+
+      public void Turn_Update()
+      {
+        turnIndex++;
+        if (turnIndex == 5)
+        {
+          Log("DoneTurning");
+          fsm.ChangeState(States.Idle);
+        }
+      }
+
+      public void TestStateX_Exit()
+      {
+        Log("TestStateX_Exit");
+        fsm.ChangeState(States.TestStateZ);
+      }
+
+      public void TestStateY_Enter()
+      {
+        Log("TestStateY_Enter");
+      }
+      public void TestStateY_Update()
+      {
+        Log("TestStateY_Update");
+      }
+
+      public void TestStateZ_Enter()
+      {
+        Log("TestStateZ_Enter");
+      }
+
 
       void Log(string msg)
       {

@@ -8,7 +8,11 @@ namespace com.enemyhideout.fsm
 {
   public class EnemyFsm<T> where T : Enum
   {
-    public FsmState<T> CurrentState;
+    public T State {
+      get { return _currentState.State; }
+    }
+
+    private FsmState<T> _currentState;
 
     public Dictionary<T, FsmState<T>> AllStates;
     
@@ -21,19 +25,19 @@ namespace com.enemyhideout.fsm
 
     public void ChangeState(T newState)
     {
-      Task exitingTask = null;
-      if (CurrentState != null)
+      if (_currentState != null && newState.Equals(State))
       {
-        exitingTask = CurrentState.Exit();
+        return;
       }
-      
-      CurrentState =  FsmCore<T>.ChangeState(newState, CurrentState, AllStates);
-      CurrentState.Enter(exitingTask);
+      FsmState<T> nextState = FsmCore<T>.ChangeState(newState, _currentState, AllStates);
+      FsmState<T> previousState = _currentState;
+      _currentState = nextState;
+      nextState.Enter(previousState);
     }
 
     public void Dispose()
     {
-      CurrentState?.Cancel();
+      _currentState?.Cancel();
     }
 
   }

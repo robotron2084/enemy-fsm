@@ -57,6 +57,18 @@ namespace com.enemyhideout.fsm.tests
         await UniTask.Yield();
         AssertLog(actor.ObjectHistory, "DoubleJump", "DoubleJump2", "DoubleJump3");
 
+        // testing changing state while in update loop.
+        actor.fsm.ChangeState(TestActor.States.Turn);
+        await UniTask.WaitUntil(() => actor.fsm.State == TestActor.States.Idle);
+        AssertLog(actor.ObjectHistory, "DoneTurning");
+        
+        actor.fsm.ChangeState(TestActor.States.TestStateX);
+        actor.fsm.ChangeState(TestActor.States.TestStateY);
+        // state y should not execute, and state x will change the state in _Exit.
+        AssertLog(actor.ObjectHistory, "TestStateX_Exit", "TestStateZ_Enter");
+
+        
+
         try
         {
           actor.fsm.ChangeState(TestActor.States.Dead);

@@ -21,13 +21,27 @@ namespace com.enemyhideout.fsm
     public Action OnExit;
     public Action OnUpdate;
 
-    public void Enter(Task exitingState)
+    private Task _exitTask;
+
+    public void Enter(FsmState<T> previousState)
     {
+      CancellationToken ct = _cancellationTokenSource.Token;
+      // first we exit the previous state.
+      previousState?.Exit();
+      // user is exiting state X to then enter Y.
+      // user changes state to Z via changestate in Exit
+      // Enter() is called on new state Z calling Exit() on state Y
+      // this means that cancellation should have been requested on Y
+      // we should not enter Y at all.
+      if (ct.IsCancellationRequested)
+      {
+        return;
+      }
+      
       OnEnter?.Invoke();
       if (OnEnterTask != null)
       {
-        _cancellationTokenSource = new CancellationTokenSource();
-        Task_Enter(exitingState);
+        Task_Enter();
       }
       else
       {
@@ -37,29 +51,28 @@ namespace com.enemyhideout.fsm
 
     public async void Update()
     {
-      await Update(_cancellationTokenSource);
+      await Task_Update(_cancellationTokenSource.Token);
     }
 
-    public async void Task_Enter(Task exitingState)
+    public async void Task_Enter()
     {
-      await exitingState;
       CancellationTokenSource cts = _cancellationTokenSource;
       await OnEnterTask(cts.Token);
-      await Update(cts);
+      await Task_Update(cts.Token);
     }
 
-    private async Task Update(CancellationTokenSource cts)
+    private async Task Task_Update(CancellationToken ct)
     {
-      if (!cts.Token.IsCancellationRequested)
+      if (!ct.IsCancellationRequested)
       {
         if (OnUpdate != null)
         {
-          await Task_Update(_cancellationTokenSource.Token);
+          await Task_UpdateLoop(ct);
         } 
       }
     }
 
-    private async Task Task_Update(CancellationToken ct)
+    private async Task Task_UpdateLoop(CancellationToken ct)
     {
       while (!ct.IsCancellationRequested)
       {
@@ -71,14 +84,24 @@ namespace com.enemyhideout.fsm
       }
     }
 
-    public async Task Exit()
+    public async void Exit()
     {
+      if (_exitTask == null)
+      {
+        _exitTask = Task_Exit();
+        await _exitTask;
+        _exitTask = null;
+      }
+      // else: ChangeState was called from within _Exit().
+    }
 
+    public async Task Task_Exit()
+    {
       OnExit?.Invoke();
-      _cancellationTokenSource.Cancel();
+      _cancellationTokenSource.Cancel(); // make sure nothing continues here.
+      _cancellationTokenSource = new CancellationTokenSource(); // make a new cancellation token.
       if (OnExitTask != null)
       {
-        _cancellationTokenSource = new CancellationTokenSource();
         await OnExitTask(_cancellationTokenSource.Token);
       }
     }
