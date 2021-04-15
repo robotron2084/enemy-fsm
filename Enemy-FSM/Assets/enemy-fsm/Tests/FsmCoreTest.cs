@@ -49,7 +49,8 @@ namespace com.enemyhideout.fsm.tests
         {
 
             Func<CancellationToken, Task> TestDelegate = null;
-            FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, this, ref TestDelegate);
+            object actor = testCase.Actor == null ? this : testCase.Actor;
+            FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, actor, ref TestDelegate);
             Assert.AreEqual(testCase.ShouldHaveDelegate, TestDelegate != null);
         }
 
@@ -100,6 +101,7 @@ namespace com.enemyhideout.fsm.tests
         public class DelegateFuncTestCase
         {
             public string Description;
+            public object Actor = null;
             public string FunctionName;
             public bool ShouldHaveDelegate;
             public bool ShouldHaveAction;
@@ -135,7 +137,8 @@ namespace com.enemyhideout.fsm.tests
         public void FsmCoreSetDelegateActionTest([ValueSource("DelegateActionTestCases")] DelegateFuncTestCase testCase)
         {
             Action testAction = null;
-            FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, this, ref testAction);
+            object actor = testCase.Actor == null ? this : testCase.Actor;
+            FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, actor, ref testAction);
             Assert.AreEqual(testCase.ShouldHaveAction, testAction != null);
         }
         
@@ -188,8 +191,31 @@ namespace com.enemyhideout.fsm.tests
                 Description = "Non-existent Function",
                 FunctionName = "DoesntExist",
                 ShouldHaveAction = false
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Inheritance Function",
+                FunctionName = "Idle_Enter",
+                ShouldHaveAction = true,
+                Actor = new ChildActor()
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Non-virtual Parent Function",
+                FunctionName = "NonVirtualParentAction",
+                ShouldHaveAction = true,
+                Actor = new ChildActor()
+            },
+            new DelegateFuncTestCase()
+            {
+                Description = "Virtual Parent Function",
+                FunctionName = "VirtualParentAction",
+                ShouldHaveAction = true,
+                Actor = new ChildActor()
             }
-            
+
+
+
         };
         
         [Test]
@@ -197,7 +223,8 @@ namespace com.enemyhideout.fsm.tests
         {
             Action testAction = null;
             Func<CancellationToken, Task> testFunc = null;
-            FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, this, ref testFunc, ref testAction);
+            object actor = testCase.Actor == null ? this : testCase.Actor;
+            FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, actor, ref testFunc, ref testAction);
             Assert.AreEqual(testCase.ShouldHaveAction, testAction != null);
             Assert.AreEqual(testCase.ShouldHaveDelegate, testFunc != null);
         }
@@ -207,8 +234,9 @@ namespace com.enemyhideout.fsm.tests
         {
             Action testAction = null;
             Func<CancellationToken, Task> testFunc = null;
+            object actor = testCase.Actor == null ? this : testCase.Actor;
             Assert.Catch<InvalidCastException>(() =>
-                FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, this, ref testFunc, ref testAction));
+                FsmCore<FsmCoreTest>.SetDelegateFor(testCase.FunctionName, actor, ref testFunc, ref testAction));
         }
         
         

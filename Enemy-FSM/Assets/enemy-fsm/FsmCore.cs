@@ -11,7 +11,7 @@ namespace com.enemyhideout.fsm
     private const string InvalidMethodSignatureMessage =
       "The signature for method {0} does not match the expected formats of Action or Func<CancellationToken,Task>.";
     
-    private const BindingFlags methodFlags = BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public |
+    private const BindingFlags methodFlags = BindingFlags.Instance | BindingFlags.Public |
     BindingFlags.NonPublic;
     public static Dictionary<T, FsmState<T>> GenerateStates()
     {
