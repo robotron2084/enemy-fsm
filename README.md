@@ -99,8 +99,48 @@ fsm.Dispose();
 
 Early days, check out the code if you like! This is an experiment to see how well the above things mix. I have a feeling they might work well together. We'll see!
 
+### Simple Gun Example
 
+```
+using System.Threading;
+using System.Threading.Tasks;
+using com.enemyhideout.fsm;
+using UnityEngine;
 
+namespace Code
+{
+  public class Gun : MonoBehaviour
+  {
+    public enum States
+    {
+      Idle,
+      Fire
+    }
 
+    private EnemyFsm<States> fsm;
+    public float firingRate = 0.5f;
+      
+    void Start()
+    {
+      fsm = new EnemyFsm<States>(this);
+    }
+
+    void Idle_Update()
+    {
+      if (Input.GetMouseButton(0))
+      {
+        fsm.ChangeState(States.Fire);
+      }
+    }
+
+    async Task Fire_Enter(CancellationToken token)
+    {
+      Debug.Log("Fire");
+      await Task.Delay((int)(firingRate * 1000));
+      fsm.ChangeState(States.Idle);
+    }
+  }
+}
+```
 
 
