@@ -1,5 +1,6 @@
 {
-    "name": "Tests",
+    "name": "EnemyFsmTests",
+    "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",

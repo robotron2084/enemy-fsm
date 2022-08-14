@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
 
 namespace com.enemyhideout.fsm.tests
 {
   public partial class TestFsm
-  {
+  { 
     public class TestActor
     {
       public enum States
@@ -53,7 +52,7 @@ namespace com.enemyhideout.fsm.tests
         Log("Ready...");
         await Task.Delay(100);
         Log("Set...");
-        await UniTask.Yield();
+        await Task.Delay(100);
         Log("Go!!!");
       }
 
@@ -95,7 +94,7 @@ namespace com.enemyhideout.fsm.tests
       public async Task DoubleJump_Enter(CancellationToken ct)
       {
         Log("DoubleJump2");
-        await UniTask.Yield();
+        await Task.Delay(100);
         Log("DoubleJump3");
       }
 

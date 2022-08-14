@@ -1,0 +1,18 @@
+{
+  "name": "com.enemyhideout.enemyfsm",
+  "version": "0.0.1",
+  "displayName": "Enemy FSM",
+  "description": "My go-to FSM library, mainly for my own usage.",
+  "unity": "2019.1",
+  "unityRelease": "0b5",
+  "documentationUrl": "https://github.com/robotron2084/enemy-fsm",
+  "changelogUrl": "https://github.com/robotron2084/servicelocator/blob/main/changelog.md",
+  "licensesUrl": "https://github.com/robotron2084/servicelocator/blob/main/LICENSE",
+  "dependencies": { },
+  "keywords": [  ],
+  "author": {
+    "name": "Chris Hill",
+    "email": "chris@enemyhideout.com",
+    "url": "https://www.enemyhideout.com"
+  }
+}
